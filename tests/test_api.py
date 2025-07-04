@@ -46,7 +46,7 @@ async def test_diagnosis_success():
     result = response.json()
     assert result["diagnosis"] == "Common cold with mild fever"
     assert "disclaimer" in result
-2. ✅ Also Update test_history_r
+2.   Also Update test_history_r
 
 @pytest.mark.asyncio
 async def test_diagnosis_invalid_payload():
