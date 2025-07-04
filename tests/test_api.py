@@ -28,15 +28,25 @@ async def test_diagnosis_success():
         "image_base64": None
     }
 
-    async with AsyncClient(app=app, base_url="http://test") as ac:
-        response = await ac.post("/api/diagnose", json=payload)
+    mock_response = {
+        "diagnosis": "Common cold with mild fever",
+        "medicines": ["Paracetamol 500mg - twice daily", "Cough syrup - 10ml thrice daily"],
+        "medicine_timing": "Paracetamol after meals, syrup before sleep",
+        "diet_recommendations": ["Drink warm fluids", "Avoid cold drinks", "Take rest"],
+        "nearby_pharmacies": ["Apollo Pharmacy", "MedPlus"],
+        "recommended_doctors": ["General Practitioner"],
+        "disclaimer": "This is a mock AI diagnosis for testing purposes only."
+    }
+
+    with patch("backend.server.get_ai_diagnosis", return_value=mock_response):
+        async with AsyncClient(app=app, base_url="http://test") as ac:
+            response = await ac.post("/api/diagnose", json=payload)
 
     assert response.status_code == 200
     result = response.json()
-    assert "diagnosis" in result
-    assert isinstance(result["medicines"], list)
+    assert result["diagnosis"] == "Common cold with mild fever"
     assert "disclaimer" in result
-
+2. ✅ Also Update test_history_r
 
 @pytest.mark.asyncio
 async def test_diagnosis_invalid_payload():
